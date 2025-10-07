@@ -161,6 +161,31 @@ class Score:
         self.img = self.fonto.render(f"スコア:{self.ten}", 0, (0,0,255))
         screen.blit(self.img, self.rct)
 
+class Explosion:
+    """
+    爆発エフェクトを管理
+    """
+    def __init__(self, bomb: Bomb):
+        """
+        爆発エフェクトの画像をロードし、初期設定を行う
+        引数 bomb: 爆弾のBombインスタンス
+        """
+        img = pg.image.load("fig/explosion.gif")
+        imgs = pg.transform.flip(img, True, True)
+        self.imgs = [img, imgs]
+        tyusin = bomb.rct.center
+        self.rct = self.imgs[0].get_rect(center=tyusin)
+        self.life = 50 
+
+    def update(self, screen: pg.Surface):
+        """
+        爆発エフェクトをアニメーション表示する
+        引数:screen: 画面Surface
+        """
+        self.life -= 1
+        if self.life > 0:
+            screen.blit(self.imgs[self.life % 2], self.rct)
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -173,6 +198,7 @@ def main():
         bombs.append(Bomb((255, 0, 0), 10))
     beam = None  # ゲーム初期化時にはビームは存在しない
     beams = []
+    ex_lst = []
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -203,10 +229,11 @@ def main():
                             # ビームと爆弾の衝突判定
                             beams[g], bombs[i]  = None, None
                             bird.change_img(6, screen)
+                            ex_lst.append(Explosion(bomb))
                             score.ten += 1
                 bombs = [bomb for bomb in bombs if bomb is not None]
                 beams = [beam for beam in beams if beam is not None]
-                    
+        ex_lst = [exp for exp in ex_lst if exp.life > 0]
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         for h, beam in enumerate(beams):
@@ -217,6 +244,8 @@ def main():
         beams = [beam for beam in beams if beam is not None]
         for bomb in bombs:
             bomb.update(screen) 
+        for exp in (ex_lst):
+            exp.update(screen)
         score.update(screen)
         pg.display.update()
         tmr += 1
