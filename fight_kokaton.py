@@ -208,10 +208,13 @@ def main():
                 beams = [beam for beam in beams if beam is not None]
                     
         key_lst = pg.key.get_pressed()
-        bird.update(key_lst, screen)  
-        for beam in beams:
-            print(len(beams))
+        bird.update(key_lst, screen)
+        for h, beam in enumerate(beams):
+            if check_bound(beams[h].rct) == (False,True):
+                beams[h] = None
             beam.update(screen)
+                
+        beams = [beam for beam in beams if beam is not None]
         for bomb in bombs:
             bomb.update(screen) 
         score.update(screen)
