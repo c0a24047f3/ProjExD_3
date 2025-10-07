@@ -140,6 +140,7 @@ class Bomb:
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
 
+
 class Score:
     """
     スコアを表示するクラス
@@ -160,6 +161,7 @@ class Score:
         """
         self.img = self.fonto.render(f"スコア:{self.ten}", 0, (0,0,255))
         screen.blit(self.img, self.rct)
+
 
 class Explosion:
     """
